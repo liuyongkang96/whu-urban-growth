@@ -14,11 +14,6 @@ const feature = (ring, properties) => ({
 
 const collection = (features) => ({ type: 'FeatureCollection', features });
 
-export const context = collection([
-  feature([[114.19,30.71],[114.28,30.63],[114.31,30.59],[114.30,30.55],[114.26,30.51],[114.23,30.44],[114.21,30.41],[114.22,30.48],[114.25,30.53],[114.28,30.56],[114.29,30.59],[114.26,30.64],[114.19,30.71]], { name: '长江（示意）' }),
-  feature([[114.36,30.58],[114.40,30.60],[114.44,30.58],[114.44,30.55],[114.41,30.54],[114.38,30.56],[114.36,30.58]], { name: '东湖（示意）' }),
-]);
-
 export const sampleBounds = [114.22,30.46,114.48,30.62];
 export const fixtureGrid = collection(samples.map(({ id, center: [x,y] }) =>
   feature([[x-.013,y-.009],[x+.013,y-.009],[x+.013,y+.009],[x-.013,y+.009],[x-.013,y-.009]],

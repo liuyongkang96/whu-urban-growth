@@ -1,3 +1,7 @@
+import { compareModels } from './metrics.js';
+import ImageLayer from 'ol/layer/Image.js';
+import ImageStatic from 'ol/source/ImageStatic.js';
+import { getCenter } from 'ol/extent.js';
 import 'ol/ol.css';
 import './style.css';
 import Map from 'ol/Map.js';
@@ -12,7 +16,7 @@ import VectorSource from 'ol/source/Vector.js';
 import TileWMS from 'ol/source/TileWMS.js';
 import { Fill, Stroke, Style, Text } from 'ol/style.js';
 import { transformExtent } from 'ol/proj.js';
-import { context, fixtureGrid, fetchGrid, fetchSummary, sampleBounds, studyBounds, summarizeFixture } from './data.js';
+import { fixtureGrid, fetchGrid, fetchSummary, sampleBounds, studyBounds, summarizeFixture } from './data.js';
 
 const el = (id) => document.getElementById(id);
 const live = import.meta.env.VITE_DATA_MODE === 'service';
@@ -22,7 +26,7 @@ const project = (bounds) => transformExtent(bounds, 'EPSG:4326', 'EPSG:3857');
 const read = (data) => geojson.readFeatures(data, projection);
 const area = (number) => number.toFixed(3);
 const signed = (number) => (number > 0 ? '+' : '') + area(number);
-const areaColors = ['#e5edd4','#b6d5a4','#6ca88c','#377e70','#215847'];
+const areaColors = ['#e9ce91','#dba65e','#ca804c','#a75b3a','#773928'];
 const errorColors = ['#2e6c9e','#94c1db','#eee9df','#e0a37c','#a64839'];
 const initialBounds = live ? studyBounds : sampleBounds;
 let mode = 'prediction';
@@ -35,7 +39,10 @@ let dragging = false;
 
 const gridSource = new VectorSource();
 const selectionSource = new VectorSource();
-const waterSource = new VectorSource({ features: live ? [] : read(context) });
+const baseSource = new ImageStatic({
+  url: import.meta.env.BASE_URL + 'wuhan-2010.webp', projection: 'EPSG:4326',
+  imageExtent: [114.0199250783,30.2699013083,114.6799173175,30.8299110564],
+});
 const view = new View({ center: [0,0], zoom: 11, constrainRotation: 0, enableRotation: false, minZoom: 8, maxZoom: 17 });
 const wmsSource = new TileWMS({
   url: import.meta.env.VITE_WMS_URL || '/geoserver/wms',
@@ -55,7 +62,7 @@ function gridStyle(feature, observed) {
   return new Style({
     fill: new Fill({ color: row ? (error ? errorColors : areaColors)[index] : '#e9eee4' }),
     stroke: new Stroke({ color: active ? '#dc813e' : '#466258', width: active ? 3 : 1 }),
-    text: active && row ? new Text({ text: error ? signed(value) : area(value), font: 'bold 13px sans-serif',
+    text: (active || !live) && row ? new Text({ text: active ? (error ? signed(value) : area(value)) : id.slice(-2), font: 'bold 13px sans-serif',
       fill: new Fill({color:'#19362c'}), stroke: new Stroke({color:'#fff',width:3}) }) : undefined,
   });
 }
@@ -63,9 +70,7 @@ function gridStyle(feature, observed) {
 function createMap(target, observed) {
   const tile = new TileLayer({ source: wmsSource, visible: false, opacity: .43 });
   const layers = [
-    new VectorLayer({ source: waterSource, style: new Style({ fill: new Fill({color:'#cddedb'}),
-      stroke: new Stroke({color:'#aac4c0', width:1}),
-      text: new Text({ text:'', fill:new Fill({color:'#547671'}) }) }) }),
+    new ImageLayer({ source: baseSource }),
     tile,
     new VectorLayer({ source: selectionSource, style: new Style({ stroke: new Stroke({color:'#688777', width:2,lineDash:[6,6]}) }) }),
     new VectorLayer({ source: gridSource, style: (feature) => gridStyle(feature, observed) }),
@@ -155,6 +160,7 @@ function redraw() {
 }
 
 async function refresh() {
+  clearComparison();
   pending?.abort();
   const controller = new AbortController();
   pending = controller;
@@ -178,6 +184,7 @@ async function refresh() {
     if (!controller.signal.aborted) el('status').textContent = error.message;
   }
   redraw();
+  if (result && !el("results").hidden && !controller.signal.aborted) loadComparison();
 }
 
 function fit() {
@@ -187,6 +194,7 @@ function fit() {
 document.querySelectorAll('[data-mode]').forEach((button) => {
   button.addEventListener('click', () => {
     mode = button.dataset.mode;
+    if (mode === 'prediction') toggleComparison(false);
     document.querySelectorAll('[data-mode]').forEach((item) => {
       item.setAttribute('aria-pressed', String(item === button));
     });
@@ -207,6 +215,73 @@ el('reset').addEventListener('click', () => {
 });
 el('show-wms').addEventListener('change', redraw);
 
+let compareRequest;
+const names = {mean:'均值基线',distance:'距离基线',rf:'随机森林'};
+
+function clearComparison() {
+  compareRequest?.abort();
+  el('model-rows').replaceChildren();
+  el('eval-status').textContent = '';
+}
+
+function toggleComparison(open) {
+  el('results').hidden = !open;
+  el('evaluate').setAttribute('aria-expanded',String(open));
+  el('evaluate').textContent = open ? '收起对照' : '展开对照';
+  clearComparison();
+  if (open && result) loadComparison();
+}
+
+async function locateWorst(model, id) {
+  el('model').value = model;
+  document.querySelector('[data-mode="error"]').click();
+  await refresh();
+  if (el('model').value !== model || !lookup.has(id)) return;
+  selectGrid(id);
+  const feature = gridSource.getFeatures().find(f => f.get('grid_id') === id);
+  if (feature) view.animate({center:getCenter(feature.getGeometry().getExtent()),duration:280});
+  el('map').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+async function loadComparison() {
+  clearComparison();
+  const request = new AbortController();
+  compareRequest = request;
+  if (!result?.count) {
+    el('eval-status').textContent = '选区为空，请重新框选。';
+    return;
+  }
+  el('eval-status').textContent = '正在核对三个模型的网格…';
+  try {
+    const summaries = await Promise.all(Object.keys(names).map(model => {
+      if (model === result.model) return result;
+      if (!live) return summarizeFixture(model,bbox);
+      return fetchSummary(import.meta.env.VITE_WPS_URL || '/wps', model, bbox, request.signal);
+    }));
+    if (request.signal.aborted) return;
+    const metrics = compareModels(summaries);
+    for (const metric of metrics) {
+      const tr = document.createElement('tr');
+      for (const text of [names[metric.model],area(metric.mae),metric.hits === null ? '—' : metric.hits+' / 10']) {
+        tr.insertCell().textContent = text;
+      }
+      const link = document.createElement('button');
+      link.textContent = metric.worst.id+' · '+signed(metric.worst.delta)+' km²';
+      link.addEventListener('click', () => locateWorst(metric.model,metric.worst.id));
+      tr.insertCell().append(link);
+      el('model-rows').append(tr);
+    }
+    el('eval-status').textContent = '共同网格 '+result.count+' 个。'+(result.count<=10 ? '超过 10 格时显示热点命中数。' : '命中数取预测前十与观测前十的交集。');
+  } catch (error) {
+    if (!request.signal.aborted) el('eval-status').textContent = error.message;
+  }
+}
+el('evaluate').addEventListener('click', () => {
+  const open = el('results').hidden;
+  if (open && mode === 'prediction') document.querySelector('[data-mode="error"]').click();
+  toggleComparison(open);
+});
+
 try {
   if (live) {
     el('source').textContent = '地理服务';
@@ -219,3 +294,5 @@ try {
 } catch (error) {
   el('status').textContent = error.message;
 }
+
+

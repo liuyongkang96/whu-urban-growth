@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#132820"><title>武汉城市扩张回测</title></head>
 <body>
-<header class="mast"><div><strong>武汉城市扩张回测</strong><span>地理信息服务技术课程项目</span></div><span id="source" class="tag">本地合成样例</span></header>
+<header class="mast"><div><strong>武汉大学</strong><span>地理信息服务技术</span></div><span id="source" class="tag">本地合成样例</span></header>
 <main>
-<section class="intro"><div><h1>把武汉停在 2010 年</h1><p>预测随后五年的新增聚居地面积，再与遥感识别结果比较。</p></div><div class="years">2010 <i></i> 2015</div></section>
+<section class="intro"><div><h1>武汉城市扩张回测</h1><p>中心城区样区　/　新增聚居地面积</p></div><div class="years">2010 <i></i> 2015</div></section>
 <section class="toolbar" aria-label="地图分析设置">
 <label>预测模型 <select id="model"><option value="rf">随机森林</option><option value="distance">距离基线</option><option value="mean">均值基线</option></select></label>
 <div class="views" role="group" aria-label="地图视图"><button data-mode="prediction" aria-pressed="true">预测</button><button data-mode="compare" aria-pressed="false">揭晓观测</button><button data-mode="error" aria-pressed="false">误差</button></div>
@@ -12,10 +12,11 @@
 </section>
 <p id="status" class="status" role="status" aria-live="polite"></p>
 <div class="workspace">
-<section class="atlas" aria-label="武汉样区地图"><div id="maps" class="maps"><div class="map-cell"><div id="map" class="map" tabindex="0"></div><span class="map-label" id="map-label">预测新增面积</span></div><div class="map-cell" id="compare-cell" hidden><div id="compare-map" class="map" tabindex="0"></div><span class="map-label">观测新增面积</span></div></div><div class="legend" id="legend"></div><label id="wms-toggle" hidden><input id="show-wms" type="checkbox">显示聚居地年份图层</label></section>
-<aside class="summary"><h2>选区统计</h2><div class="metrics"><div><span>选中网格</span><strong id="count">0</strong></div><div><span>预测新增 · km²</span><strong id="pred">—</strong></div><div id="obs-box" hidden><span>观测新增 · km²</span><strong id="obs">—</strong></div></div><p>格心落在框内时，计入整个网格。</p><hr><h2>网格详情</h2><p id="detail">点击地图或下方列表查看网格。</p><h3>预测面积排名</h3><ol id="ranking"></ol></aside>
+<section class="atlas" aria-label="武汉样区地图"><div id="maps" class="maps"><div class="map-cell"><div id="map" class="map" tabindex="0"></div><span class="map-label" id="map-label">预测新增面积</span></div><div class="map-cell" id="compare-cell" hidden><div id="compare-map" class="map" tabindex="0"></div><span class="map-label">观测新增面积</span></div></div><div class="legend" id="legend"></div><label id="wms-toggle" hidden><input id="show-wms" type="checkbox">显示聚居地年份图层</label><div class="credit">底图为 2010 年及以前识别的聚居地 · © DLR / WSF Evolution · CC BY 4.0</div></section>
+<aside class="summary"><h2>选区记录</h2><div class="metrics"><div><span>选中网格</span><strong id="count">0</strong></div><div><span>预测新增 · km²</span><strong id="pred">—</strong></div><div id="obs-box" hidden><span>观测新增 · km²</span><strong id="obs">—</strong></div></div><p>格心落在框内时，计入整个网格。</p><hr><h2>网格详情</h2><p id="detail">点击地图或下方列表查看网格。</p><h3>预测面积排名</h3><ol id="ranking"></ol></aside>
 </div>
-<footer>武汉中心城区样区 <span>·</span> 面积单位 km² <span>·</span> <span id="foot-note">三格合成数据用于联调。</span></footer>
+<section class="evaluation"><div class="eval-head"><div><h2>选区模型对照</h2><p>比较同一批网格的预测误差，点击偏差最大的网格可在地图上定位。</p></div><button id="evaluate" aria-expanded="false" aria-controls="results">展开对照</button></div><div id="results" hidden><p id="eval-status" role="status"></p><div class="scroll-table"><table><thead><tr><th>模型</th><th>平均绝对误差 / km²</th><th>前十热点命中</th><th>最大偏差网格</th></tr></thead><tbody id="model-rows"></tbody></table></div></div></section><footer>武汉中心城区样区 <span>·</span> 面积单位 km² <span>·</span> <span id="foot-note">三格合成数据用于联调。</span></footer>
 </main>
 <script type="module" src="/src/main.js"></script>
 </body></html>
+
