@@ -284,7 +284,7 @@ el('evaluate').addEventListener('click', () => {
 
 try {
   if (live) {
-    el('source').textContent = '地理服务';
+
     el('foot-note').textContent = '聚居地年份图层 © DLR · WSF Evolution · CC BY 4.0';
   }
   const data = live ? await fetchGrid(import.meta.env.VITE_WFS_URL || '/geoserver/wfs') : fixtureGrid;

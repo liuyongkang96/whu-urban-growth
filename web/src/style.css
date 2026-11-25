@@ -2,7 +2,7 @@
 :root{font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#28332d;background:#f8f7f1;font-size:16px}
 body{margin:0 auto;width:min(94%,1550px)}[hidden]{display:none!important}button,select{font:inherit;color:inherit;cursor:pointer}button{border:0;background:transparent}button:focus-visible,select:focus-visible,.map:focus-visible{outline:2px solid #aa4d2e;outline-offset:-2px}
 .mast,.mast>div,.intro,.toolbar,.eval-head,footer{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.mast{padding:18px 0 12px;border-bottom:1px solid #616c60;font-size:.86rem;letter-spacing:.06em}.mast strong{font:700 1.22rem SimSun,serif}.tag{color:#865339;border-left:2px solid #a76440;padding-left:9px}
+.mast{padding:18px 0 12px;border-bottom:1px solid #616c60;font-size:.86rem;letter-spacing:.06em}.mast strong{font:700 1.22rem SimSun,serif}
 .intro{padding:18px 0;align-items:flex-end}.intro p,.credit,.eval-head p,.summary p,#eval-status{font-size:.86rem;color:#5e675c;line-height:1.6}
 h1,h2,h3{font-family:"Songti SC","SimSun",serif;margin:0}
 h1{font-size:clamp(30px,3.2vw,50px);letter-spacing:.045em}.intro p{margin:3px 0 0}.years{display:flex;align-items:center;gap:12px;font:italic clamp(24px,2.8vw,39px) Georgia,serif;color:#865339}.years i{width:48px;height:1px;background:#a08c76}

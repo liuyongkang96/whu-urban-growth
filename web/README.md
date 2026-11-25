@@ -6,7 +6,7 @@
 
 ## 真实服务联调
 
-复制 `.env.example` 为 `.env.local`，填入 C 提供的 GeoServer 和 PyWPS 服务源站。重新启动 Vite 后查看页头的数据模式。Vite 开发和预览服务均配置同源代理。静态部署时由宿主反向代理 `/geoserver` 与 `/wps`。环境变量 `VITE_WFS_URL`、`VITE_WMS_URL`、`VITE_WPS_URL` 可覆盖同源路径。
+复制 `.env.example` 为 `.env.local`，填入 C 提供的 GeoServer 和 PyWPS 服务源站。重新启动 Vite 后可在页脚核对数据来源。Vite 开发和预览服务均配置同源代理。静态部署时由宿主反向代理 `/geoserver` 与 `/wps`。环境变量 `VITE_WFS_URL`、`VITE_WMS_URL`、`VITE_WPS_URL` 可覆盖同源路径。
 
 实现使用 PROJECT.md 的 `whu:grid`、`whu:settlement_year`、`growth_summary`。验证 WFS GeoJSON 坐标顺序、WPS JSON 类型及网格 ID 是否一致。预测视图隐藏含 2015 年信息的 WMS 图层；揭晓或误差视图可以手动叠加。真实服务连通性须在 C 提供实例后核验。
 
