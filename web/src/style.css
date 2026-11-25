@@ -1,0 +1,52 @@
+*{box-sizing:border-box}
+:root{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#17382e;background:#f2f4ed;font-synthesis:none}
+body{margin:0}
+[hidden]{display:none!important}
+button,select{font:inherit;color:inherit}
+button,select{border:1px solid #c5d3c7;background:#fff;border-radius:7px;padding:.52rem .9rem;cursor:pointer}
+button:hover,select:hover{border-color:#477860}
+button:focus-visible,select:focus-visible,.map:focus-visible{outline:3px solid #bb7239;outline-offset:2px}
+button[aria-pressed=true]{color:#fff;background:#245d49;border-color:#245d49}
+.mast{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#132820;color:white;padding:1.15rem clamp(1rem,4.5vw,4rem)}
+.mast strong{font-size:1.12rem}
+.mast div span{color:#c8d7c7;margin-left:1.2rem;font-size:.85rem}
+.tag{border:1px solid #749382;border-radius:40px;color:#deead6;padding:.33rem .7rem;white-space:nowrap;font-size:.85rem}
+main{max-width:1570px;margin:auto;padding:0 clamp(1rem,4vw,3.8rem)}
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:1.2rem;padding:2rem 0 1.25rem}
+h1{margin:0;letter-spacing:.015em;font-size:clamp(1.85rem,4.5vw,3.15rem);line-height:1.26}
+.intro p{margin:.65rem 0 0;color:#45665a}
+.years{display:flex;gap:.6rem;align-items:center;white-space:nowrap;font-size:1.22rem;font-variant-numeric:tabular-nums;color:#315f4e;padding-bottom:.2rem}
+.years i{display:block;width:clamp(20px,5vw,100px);height:1px;background:#829f8a}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;padding:.7rem;border:1px solid #d5dfd5;background:#e8eee4;border-radius:.75rem}
+.toolbar label,.views,.tools{display:flex;align-items:center;gap:.4rem;font-size:.9rem}
+.tools{margin-left:auto}
+.status{font-size:.86rem;color:#365a4c;min-height:1.35rem;margin:.65rem 0}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:1rem}
+.atlas,.summary{border:1px solid #cbd9cc;background:#fcfdf7;border-radius:12px;overflow:hidden}
+.maps{display:grid;background:#e9eee1}
+.maps.paired{grid-template-columns:1fr 1fr}
+.map-cell{min-width:0;position:relative}
+.map-cell+.map-cell{border-left:1px solid #a9bbb0}
+.map{height:clamp(345px,57vh,680px);background-color:#e9eee1;background-image:linear-gradient(#dbe6d9 1px,transparent 1px),linear-gradient(90deg,#dbe6d9 1px,transparent 1px);background-size:43px 43px;cursor:grab}
+.map.drawing{cursor:crosshair}
+.ol-dragbox{border:2px dashed #245d49;background:#245d4920}
+.map-label{position:absolute;top:12px;left:12px;pointer-events:none;border:1px solid #cddad1;border-radius:6px;background:#fcfdf7;padding:.4rem .55rem;font-size:.85rem}
+.legend{display:flex;flex-wrap:wrap;gap:.35rem 1rem;padding:.8rem .9rem;font-size:.85rem}
+.legend span{display:flex;align-items:center;gap:.35rem}
+.legend i{border:1px solid #53695955;border-radius:2px;display:inline-block;height:.75rem;width:1rem}
+#wms-toggle{display:block;padding:.2rem .9rem .8rem}
+.summary{padding:1rem 1.15rem}
+h2{font-size:1.09rem;margin:0 0 .8rem}
+h3{font-size:.91rem;margin:1.1rem 0 .5rem}
+.summary p{font-size:.85rem;line-height:1.55;color:#3f6152;margin:.75rem 0}
+.metrics{display:grid;gap:.5rem}
+.metrics div{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.87rem}
+.metrics strong{font-size:1rem;font-variant-numeric:tabular-nums}
+hr{border:none;border-top:1px solid #dbe4d8;margin:1rem 0}
+ol{margin:.3rem 0 0;padding-left:1.3rem;font-size:.85rem}
+li{padding:.15rem 0}
+li button{width:100%;display:flex;justify-content:space-between;gap:.35rem;padding:.34rem .45rem;overflow-wrap:anywhere}
+footer{color:#45665a;padding:1rem 0 1.6rem;font-size:.8rem}
+footer>span{margin-inline:.15rem}
+@media(max-width:790px){.workspace{grid-template-columns:minmax(0,1fr)}.summary{min-height:210px}.tools{margin-left:0}}
+@media(max-width:520px){.years,.mast div span{display:none}.maps.paired{grid-template-columns:1fr}.maps.paired .map{height:280px}.map-cell+.map-cell{border-left:none;border-top:1px solid #a9bbb0}.intro{padding-top:1.25rem}}
